@@ -53,8 +53,8 @@ def schedule_lrp(weighted_dag):
 
 
 
-debug = False
-iterations = 1000
+debug = True
+iterations = 1
 ratios = []
 
 for _ in range(iterations):
@@ -63,7 +63,7 @@ for _ in range(iterations):
     custom_weight_dist = lambda: random.randint(1, 20)
     
     # Generate the graph
-    dag = generate_random_dag(n=100, p=0.3, t=4, weight_dist=custom_weight_dist)
+    dag = generate_random_dag(n=10, p=0.3, t=4, weight_dist=custom_weight_dist)
     
     # Print the generated edges with weights
     if debug:
@@ -91,7 +91,7 @@ for _ in range(iterations):
         print(f"schedule time = {schedule_time}")
         print(f"lower bound = {lower_bound}")
         print(f"ratio = {ratio}\n")
-    #draw_dag_topological(dag)
+        draw_dag_topological(dag)
     ratios.append(ratio)
 
 ratios = sorted(ratios)
