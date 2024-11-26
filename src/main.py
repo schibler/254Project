@@ -6,21 +6,17 @@ import networkx as nx
 
 from draw_graph import draw_dag_topological
 from longest_paths import longest_path_lengths
-from random_graph import generate_random_dag 
+from random_graph import generate_random_dags 
 from scheduling_algs.lrp_scheduling_alg import lrp_scheduling_alg
 
 debug = True
 iterations = 1
 ratios = []
 
-for _ in range(iterations):
+# Generate a set of graphs
+dags = generate_random_dags(iterations, n=10, p=0.3, t=4)
 
-    # Custom weight distribution function
-    custom_weight_dist = lambda: random.randint(1, 20)
-    
-    # Generate the graph
-    dag = generate_random_dag(n=10, p=0.3, t=4, weight_dist=custom_weight_dist)
-    
+for dag in dags:
     # Print the generated edges with weights
     if debug:
         for u, v, weight in dag.edges(data='weight'):
