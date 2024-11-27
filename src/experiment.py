@@ -23,8 +23,17 @@ class experiment_result:
     def min_ratio(self):
         return min(self.ratios())
 
+    def _percentile_ratio(self, k: float):
+        if k <= 0 or k >= 1:
+            raise ValueError(f"Expected k to be percentile strictly between 0 and 1, not {k}")
+        return sorted(self.ratios())[int(len(self._schedules) * k)]
+    
     def median_ratio(self):
-        return sorted(self.ratios())[int(len(self._schedules)/2)]
+        return self._percentile_ratio(0.5)
+
+    def quartile_ratios(self):
+        return {k : self._percentile_ratio(k) for k in (0.25, 0.5, 0.75)}
+            
     
 class experiment:
 
