@@ -2,7 +2,6 @@ import networkx as nx
 
 class scheduling_alg:
 
-    @classmethod
-    def schedule(cls, dag: nx.DiGraph, num_processors: int) -> dict[int, int]:
+    def schedule(self, dag: nx.DiGraph, num_fus: int) -> dict[int, int]:
         raise NotImplemented()
 
