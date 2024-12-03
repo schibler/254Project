@@ -27,20 +27,22 @@ class lrp_scheduling_alg:
                 heapq.heappush(ready, (0, n))
         ret_schedule = {}
         event_queue = [(0, None)]
-        while len(ret_schedule) < len(nodes):
+        num_scheduled = 0
+        while num_scheduled < len(nodes):
             event = heapq.heappop(event_queue)
             t, n = event
             # Time step
             if n is None:
-                if len(ready) > 0:
-                    next_node = heapq.heappop(ready)[1]
-                    ret_schedule[t] = next_node
-                    for edge in dag.out_edges(next_node, data=True):
-                        # Edge from a to b is in form (a, b, {'weight': w})
-                        b = edge[1]
-                        w = edge[2]['weight']
-                        heapq.heappush(event_queue, (t + w - 0.5, b))
-                        
+                for _ in range(num_fus):
+                    if len(ready) > 0:
+                        next_node = heapq.heappop(ready)[1]
+                        ret_schedule[t] = next_node
+                        num_scheduled += 1
+                        for edge in dag.out_edges(next_node, data=True):
+                            # Edge from a to b is in form (a, b, {'weight': w})
+                            b = edge[1]
+                            w = edge[2]['weight']
+                            heapq.heappush(event_queue, (t + w - 0.5, b))
                 heapq.heappush(event_queue, (t+1, None))
             # Dependency resolved for node n
             else:

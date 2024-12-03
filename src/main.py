@@ -17,10 +17,12 @@ ratios = []
 # Generate a set of graphs
 dags = generate_random_dags(iterations, n=10, p=0.3, t=4)
 alg = lrp_scheduling_alg()
-num_fus = 1
+num_fus = [1, 2, 4, 8, 16]
+for nfu in num_fus:
+    exp = experiment(dags, alg, nfu)
+    result = exp.run()
+    print(f"")
+    print(f"\tmax ratio = {result.max_ratio()}")
+    print(f"\tmin ratio = {result.min_ratio()}")
+    print(f"\tquartile ratios = {result.quartile_ratios()}")
 
-exp = experiment(dags, alg, num_fus)
-result = exp.run()
-print(f"max ratio = {result.max_ratio()}")
-print(f"min ratio = {result.min_ratio()}")
-print(f"quartile ratios = {result.quartile_ratios()}")
