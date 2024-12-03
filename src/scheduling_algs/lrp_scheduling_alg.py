@@ -13,7 +13,6 @@ class lrp_scheduling_alg:
         t = 0
         nodes = dag.nodes
         remaining_degree = {}
-        not_ready = set()
         ready = []
         for n in nodes:
             remaining_degree[n] = 0
@@ -21,9 +20,7 @@ class lrp_scheduling_alg:
         for edge in dag.edges:
             remaining_degree[edge[1]] += 1
         for n in nodes:
-            if remaining_degree[n] > 0:
-                not_ready.add(n)
-            else:
+            if remaining_degree[n] == 0:
                 heapq.heappush(ready, (0, n))
         ret_schedule = {}
         event_queue = [(0, None)]
@@ -48,6 +45,5 @@ class lrp_scheduling_alg:
             else:
                 remaining_degree[n] -= 1
                 if remaining_degree[n] == 0:
-                    not_ready.remove(n)
                     heapq.heappush(ready, (-1 * lengths[n], n))
         return ret_schedule
