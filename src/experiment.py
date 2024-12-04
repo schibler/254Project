@@ -57,7 +57,7 @@ class experiment:
             length_lower_bound = max([lengths[key] for key in lengths])
             lower_bound = max(length_lower_bound, dag.number_of_nodes())
 
-            schedule = self._alg.schedule(dag=dag, num_fus=1)
+            schedule = self._alg.schedule(dag=dag, num_fus=self._num_processors)
             schedules.append(schedule)
             lbs.append(lower_bound)
 
