@@ -15,7 +15,7 @@ iterations = 1000
 ratios = []
 
 # Generate a set of graphs
-dags = generate_random_dags(iterations, n=10, p=0.3, t=4)
+dags = list(generate_random_dags(iterations, n=10, p=0.25, t=4))
 alg = lrp_scheduling_alg()
 num_fus = [1, 2, 4, 8, 16]
 for nfu in num_fus:
