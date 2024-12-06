@@ -5,96 +5,48 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 from draw_graph import draw_dag_topological
+from experiment import experiment, experiment_result
 from longest_paths import longest_path_lengths
-from random_graph import generate_random_dag 
-
-def schedule_lrp(weighted_dag):
-    lengths = longest_path_lengths(dag)
-    priority_list = sorted(lengths.keys(), key=lambda k: lengths[k])
-    t = 0
-    nodes = weighted_dag.nodes
-    remaining_degree = {}
-    not_ready = set()
-    ready = []
-    for n in nodes:
-        remaining_degree[n] = 0
-
-    for edge in weighted_dag.edges:
-        remaining_degree[edge[1]] += 1
-    for n in nodes:
-        if remaining_degree[n] > 0:
-            not_ready.add(n)
-        else:
-            heapq.heappush(ready, (0, n))
-    schedule = {}
-    event_queue = [(0, None)]
-    while len(schedule) < len(nodes):
-        event = heapq.heappop(event_queue)
-        t, n = event
-        # Time step
-        if n is None:
-            if len(ready) > 0:
-                next_node = heapq.heappop(ready)[1]
-                schedule[t] = next_node
-                for edge in weighted_dag.out_edges(next_node, data=True):
-                    # Edge from a to b is in form (a, b, {'weight': w})
-                    b = edge[1]
-                    w = edge[2]['weight']
-                    heapq.heappush(event_queue, (t + w - 0.5, b))
-                    
-            heapq.heappush(event_queue, (t+1, None))
-        # Dependency resolved for node n
-        else:
-            remaining_degree[n] -= 1
-            if remaining_degree[n] == 0:
-                not_ready.remove(n)
-                heapq.heappush(ready, (-1 * lengths[n], n))
-    return schedule
-
-
+from random_graph import generate_random_dags 
+from scheduling_algs.lrp_scheduling_alg import lrp_scheduling_alg
 
 debug = True
-iterations = 1
+iterations = 1000
 ratios = []
 
-for _ in range(iterations):
+# Generate a set of graphs
+n=1000
+p=0.01
+t=100
+dags = list(generate_random_dags(iterations, n, p, t=t))
+alg = lrp_scheduling_alg()
+num_fus = [1, 2, 4, 8]
+labels = num_fus
+ratios = []
+for nfu in num_fus:
+    exp = experiment(dags, alg, nfu)
+    result = exp.run()
+    ratios.append(result.ratios())
+    print(f"")
+    print(f"\tmax ratio = {result.max_ratio()}")
+    print(f"\tmin ratio = {result.min_ratio()}")
+    print(f"\tquartile ratios = {result.quartile_ratios()}")
 
-    # Custom weight distribution function
-    custom_weight_dist = lambda: random.randint(1, 20)
-    
-    # Generate the graph
-    dag = generate_random_dag(n=10, p=0.3, t=4, weight_dist=custom_weight_dist)
-    
-    # Print the generated edges with weights
-    if debug:
-        for u, v, weight in dag.edges(data='weight'):
-            print(f"Edge from {u} to {v} with weight {weight}")
-    
-    lengths = longest_path_lengths(dag)
-    
-    # Easy lower bounds:
-    #     n: need to schedule every graph node
-    #     longest path: need to respect latency precedence constraints
-    # Take max of the two
-    length_lower_bound = max([lengths[key] for key in lengths])
-    lower_bound = max(length_lower_bound, dag.number_of_nodes())
-    
-    if debug:
-        print(f'lengths: {lengths}')
-    
-    schedule = schedule_lrp(dag)
-    schedule_time = max(schedule.keys())
-    ratio = schedule_time / float(lower_bound)
-    
-    if debug:
-        print(f'schedule: {schedule}')
-        print(f"schedule time = {schedule_time}")
-        print(f"lower bound = {lower_bound}")
-        print(f"ratio = {ratio}\n")
-        draw_dag_topological(dag)
-    ratios.append(ratio)
+fig = plt.figure(figsize=(10, 7))
 
-ratios = sorted(ratios)
-print(f"max ratio = {max(ratios)}")
-print(f"min ratio = {min(ratios)}")
-print(f"median ratio = {ratios[int(len(ratios)/2)]}")
+# Position and size of the axes ([x, y, width, height])
+ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+# Add data
+bp = ax.boxplot(ratios)
+
+fs = 18
+header_fs = fs + 2
+# Add labels, title, and ticks
+ax.set_title(f'LRP Scheduling on {n} node graphs with p={p}, t={t}', fontsize=header_fs)
+ax.set_ylabel('Ratio of schedule length to sequential lower bound', fontsize=fs)
+ax.tick_params(axis='y', labelsize=fs)  # Adjust y-axis tick label size
+ax.set_xticks(range(1, len(labels) + 1)) # 1-based label x-axis labelling
+ax.set_xticklabels(labels, fontsize=fs) # Assign experiment labels
+ax.set_xlabel("Number of Functional Units", fontsize=fs)
+
+plt.show()
