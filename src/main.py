@@ -15,9 +15,12 @@ iterations = 1000
 ratios = []
 
 # Generate a set of graphs
-dags = list(generate_random_dags(iterations, n=100, p=0.2, t=4))
+n=1000
+p=0.01
+t=100
+dags = list(generate_random_dags(iterations, n, p, t=t))
 alg = lrp_scheduling_alg()
-num_fus = [1, 2, 4, 8, 16]
+num_fus = [1, 2, 4, 8]
 labels = num_fus
 ratios = []
 for nfu in num_fus:
@@ -36,12 +39,14 @@ ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
 # Add data
 bp = ax.boxplot(ratios)
 
+fs = 18
+header_fs = fs + 2
 # Add labels, title, and ticks
-ax.set_title('Boxplot of LRP Schedule Length to Lower Bound Ratios', fontsize=14)
-ax.set_ylabel('Values', fontsize=12)
-ax.tick_params(axis='y', labelsize=10)  # Adjust y-axis tick label size
+ax.set_title(f'LRP Scheduling on {n} node graphs with p={p}, t={t}', fontsize=header_fs)
+ax.set_ylabel('Ratio of schedule length to sequential lower bound', fontsize=fs)
+ax.tick_params(axis='y', labelsize=fs)  # Adjust y-axis tick label size
 ax.set_xticks(range(1, len(labels) + 1)) # 1-based label x-axis labelling
-ax.set_xticklabels(labels, fontsize=12) # Assign experiment labels
-ax.set_xlabel("Number of Functional Units")
+ax.set_xticklabels(labels, fontsize=fs) # Assign experiment labels
+ax.set_xlabel("Number of Functional Units", fontsize=fs)
 
 plt.show()
