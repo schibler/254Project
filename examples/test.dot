@@ -1,0 +1,18 @@
+digraph G {
+  inst1 [color="blue"];
+  inst2 [color="blue"];
+  inst3 [color="red"];
+  inst4 [color="red"];
+  inst5 [color="red"];
+  inst6 [color="red"];
+  inst7 [color="blue"];
+  inst8 [color="blue"];
+  inst1 -> inst3 [weight=1 label="1"];
+  inst1 -> inst5 [weight=1 label="1"];
+  inst2 -> inst4 [weight=1 label="1"];
+  inst2 -> inst6 [weight=1 label="1"];
+  inst5 -> inst7 [weight=3 label="3"];
+  inst6 -> inst7 [weight=3 label="3"];
+  inst7 -> inst8 [weight=1 label="1"];
+}
+
