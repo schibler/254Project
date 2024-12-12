@@ -37,10 +37,10 @@ class experiment_result:
     
 class experiment:
 
-    def __init__(self, input_graphs: list[nx.DiGraph], alg: scheduling_alg, num_processors: int):
+    def __init__(self, input_graphs: list[nx.DiGraph], alg: scheduling_alg, fu_counts: dict[int, int]):
         self._input_graphs = input_graphs
         self._alg = alg
-        self._num_processors = num_processors
+        self._fu_counts = fu_counts
 
     
     def run(self) -> experiment_result:
@@ -57,7 +57,7 @@ class experiment:
             length_lower_bound = max([lengths[key] for key in lengths])
             lower_bound = max(length_lower_bound, dag.number_of_nodes())
 
-            schedule = self._alg.schedule(dag=dag, num_fus=self._num_processors)
+            schedule = self._alg.schedule(dag=dag, fu_counts=self._fu_counts)
             schedules.append(schedule)
             lbs.append(lower_bound)
 

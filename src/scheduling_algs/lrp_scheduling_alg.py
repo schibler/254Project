@@ -6,7 +6,7 @@ from longest_paths import longest_path_lengths
 
 class lrp_scheduling_alg:
 
-    def schedule(self, dag: nx.DiGraph, num_fus: int) -> dict[int, int]:
+    def schedule(self, dag: nx.DiGraph, fu_counts: dict[int: int]) -> dict[int, int]:
         # TODO: leverage num_fus
         lengths = longest_path_lengths(dag)
         priority_list = sorted(lengths.keys(), key=lambda k: lengths[k])
@@ -30,7 +30,7 @@ class lrp_scheduling_alg:
             t, n = event
             # Time step
             if n is None:
-                for _ in range(num_fus):
+                for _ in range(fu_counts[1]):
                     if len(ready) > 0:
                         next_node = heapq.heappop(ready)[1]
                         ret_schedule[t] = next_node
