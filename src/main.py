@@ -16,15 +16,16 @@ ratios = []
 
 # Generate a set of graphs
 n=1000
-p=0.01
-t=100
+p=0.20
+t=6
 dags = list(generate_random_dags(iterations, n, p, t=t))
 alg = lrp_scheduling_alg()
 num_fus = [1, 2, 4, 8]
+fu_counts_list = [{1 : count} for count in num_fus]
 labels = num_fus
 ratios = []
-for nfu in num_fus:
-    exp = experiment(dags, alg, nfu)
+for fu_counts in fu_counts_list:
+    exp = experiment(dags, alg, fu_counts)
     result = exp.run()
     ratios.append(result.ratios())
     print(f"")
