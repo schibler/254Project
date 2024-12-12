@@ -20,8 +20,10 @@ def generate_random_dags(num_dags: int, n: int, p: float=0.1, t: int | None = No
         # Create an empty directed graph
         dag = nx.DiGraph()
         
-        # Add nodes
-        dag.add_nodes_from(range(1, n + 1))  # Nodes are labeled from 1 to n
+        # Add nodes labeled 1 to n of color 1
+        for i in range(1, n + 1):
+            dag.add_node(i, color=1)
+        
     
         # Iterate over all pairs (a, b) with a < b
         for a in range(1, n + 1):
