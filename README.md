@@ -27,4 +27,4 @@ In the build directory, run the following commands:
    $ bin/opt -disable-output ../a.ll -passes=helloworld > output.dot
    ```
 
-The results of the graph should be printed to `output.dot`
+The results of the pass should be printed to `output.dot`
